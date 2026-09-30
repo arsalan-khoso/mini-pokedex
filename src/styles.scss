@@ -1,1 +1,37 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --color-primary: #007acc;
+  --color-secondary: #6c757d;
+  --color-accent: #ffb414;
+  --color-success: #28a745;
+  --color-danger: #dc3545;
+  --color-warning: #ffc107;
+  --color-surface: #131515;
+  --color-surface-2: #1e2121;
+  --color-surface-3: #2a2e2e;
+  --color-surface-overlay: rgba(19, 21, 21, 0.75);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-text-muted: rgba(255, 255, 255, 0.6);
+  --panel-width: 393px;
+  --backdrop-blur: blur(16px);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+}
+
+html {
+  background-color: #111212;
+}
+
+body {
+  color-scheme: dark;
+  background-color: var(--color-surface, #131515);
+  color: #ffffff;
+  margin: 0;
+  height: 100%;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
