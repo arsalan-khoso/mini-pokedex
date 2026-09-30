@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "mock-server": "json-graphql-server db.js --port 4000"
   },
   "private": true,
   "packageManager": "npm@11.17.0",
@@ -33,6 +34,7 @@
     "eslint": "^10.3.0",
     "husky": "^9.1.7",
     "jsdom": "^28.0.0",
+    "json-graphql-server": "^3.3.2",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
     "typescript-eslint": "8.59.2",
