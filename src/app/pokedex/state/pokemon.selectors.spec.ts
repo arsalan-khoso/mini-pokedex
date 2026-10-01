@@ -95,7 +95,15 @@ describe('pokemon selectors', () => {
   describe('PokemonSelectors.pagedPokemon$', () => {
     it('derives the visible page from the store query (filter → sort → page)', async () => {
       TestBed.configureTestingModule({
-        providers: [{ provide: PokemonApiService, useValue: { getPokemonPage$: () => of(ALL) } }],
+        providers: [
+          {
+            provide: PokemonApiService,
+            useValue: {
+              getPokemonPage$: (limit: number, offset: number) =>
+                of(ALL.slice(offset, offset + limit)),
+            },
+          },
+        ],
       });
       const store = TestBed.inject(PokemonStore);
       const selectors = TestBed.inject(PokemonSelectors);
