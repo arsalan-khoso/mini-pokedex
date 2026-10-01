@@ -17,6 +17,8 @@ export class PaginatorComponent {
   readonly rangeEnd = input.required<number>();
   readonly totalItems = input.required<number>();
   readonly disabled = input(false);
+  /** Shown in place of the range while disabled, e.g. load progress. */
+  readonly statusLabel = input<string | null>(null);
 
   readonly pageChange = output<number>();
   readonly pageSizeChange = output<number>();

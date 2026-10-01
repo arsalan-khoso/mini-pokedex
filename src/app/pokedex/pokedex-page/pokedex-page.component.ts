@@ -5,7 +5,7 @@ import { PaginatorComponent } from '../../common/components/paginator/paginator.
 import { PokemonDetailPanelComponent } from '../components/pokemon-detail-panel/pokemon-detail-panel.component';
 import { PokemonFiltersComponent } from '../components/pokemon-filters/pokemon-filters.component';
 import { PokemonTableComponent } from '../components/pokemon-table/pokemon-table.component';
-import { PAGE_SIZE_OPTIONS, PageSize } from '../constants/pokedex.constants';
+import { PAGE_SIZE_OPTIONS, POKEDEX_SIZE, PageSize } from '../constants/pokedex.constants';
 import { Pokemon, SortColumn } from '../models/pokemon.model';
 import { IDLE_DETAILS, PokemonSelectors } from '../state/pokemon.selectors';
 import { PokemonStore } from '../state/pokemon.store';
@@ -36,6 +36,12 @@ export class PokedexPage {
   protected readonly page = toSignal(this.selectors.pagedPokemon$, { requireSync: true });
   protected readonly types = toSignal(this.selectors.availableTypes$, { requireSync: true });
   private readonly pokemonById = toSignal(this.selectors.pokemonById$, { requireSync: true });
+
+  private readonly loadedCount = toSignal(this.selectors.listLoadedCount$, { requireSync: true });
+
+  protected readonly loadProgressLabel = computed(() =>
+    this.status() === 'loading' ? `Loading ${this.loadedCount()} / ${POKEDEX_SIZE}` : null,
+  );
 
   protected readonly hasActiveFilters = computed(() => {
     const { search, type } = this.query();

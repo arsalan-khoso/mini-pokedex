@@ -99,6 +99,11 @@ export class PokemonSelectors {
     distinctUntilChanged(),
   );
 
+  readonly listLoadedCount$: Observable<number> = this.store.state$.pipe(
+    map((state) => state.list.loadedCount),
+    distinctUntilChanged(),
+  );
+
   readonly listError$: Observable<string | null> = this.store.state$.pipe(
     map((state) => state.list.error),
     distinctUntilChanged(),

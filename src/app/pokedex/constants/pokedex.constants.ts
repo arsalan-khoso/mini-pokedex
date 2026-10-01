@@ -1,7 +1,10 @@
 import { StatKey } from '../models/pokemon.model';
 
-/** National Pokédex species count (Gen I–IX); loaded once and cached client-side. */
+/** Expected species count (Gen I–IX), used only for the loading progress label. */
 export const POKEDEX_SIZE = 1025;
+
+/** Page size for the paginated list query that fills the client-side cache. */
+export const POKEDEX_PAGE_SIZE = 250;
 
 export const PAGE_SIZE_OPTIONS = [10, 25, 50] as const;
 export type PageSize = (typeof PAGE_SIZE_OPTIONS)[number];

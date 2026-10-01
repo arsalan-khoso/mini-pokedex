@@ -14,7 +14,7 @@
 
   <span class="paginator__range" aria-live="polite">
     @if (disabled()) {
-      —
+      {{ statusLabel() ?? '—' }}
     } @else {
       {{ rangeStart() }}–{{ rangeEnd() }} of {{ totalItems() }}
     }

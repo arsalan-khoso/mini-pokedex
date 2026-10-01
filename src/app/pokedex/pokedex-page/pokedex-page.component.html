@@ -38,6 +38,7 @@
     [rangeEnd]="page().rangeEnd"
     [totalItems]="page().totalItems"
     [disabled]="status() !== 'success'"
+    [statusLabel]="loadProgressLabel()"
     (pageChange)="onPageChange($event)"
     (pageSizeChange)="onPageSizeChange($event)"
   />

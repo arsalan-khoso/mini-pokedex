@@ -9,9 +9,12 @@ import {
   debounceTime,
   distinctUntilChanged,
   exhaustMap,
+  expand,
+  last,
   map,
   merge,
   mergeMap,
+  scan,
   switchMap,
   tap,
 } from 'rxjs';
@@ -21,7 +24,7 @@ import {
   AUTOCOMPLETE_MIN_CHARS,
   AUTOCOMPLETE_RESULT_LIMIT,
   DEFAULT_PAGE_SIZE,
-  POKEDEX_SIZE,
+  POKEDEX_PAGE_SIZE,
   PageSize,
   SEARCH_DEBOUNCE_MS,
 } from '../constants/pokedex.constants';
@@ -47,8 +50,13 @@ export interface PokemonSearchState extends AsyncResource<readonly PokemonSummar
   term: string;
 }
 
+export interface PokemonListState extends AsyncResource<readonly Pokemon[]> {
+  /** Pokémon received so far while paging through the list query. */
+  loadedCount: number;
+}
+
 export interface PokemonState {
-  list: AsyncResource<readonly Pokemon[]>;
+  list: PokemonListState;
   query: PokemonTableQuery;
   details: Readonly<Record<number, AsyncResource<PokemonDetails | null>>>;
   search: PokemonSearchState;
@@ -64,7 +72,7 @@ export const INITIAL_POKEMON_QUERY: PokemonTableQuery = {
 };
 
 const INITIAL_STATE: PokemonState = {
-  list: { status: 'idle', data: [], error: null },
+  list: { status: 'idle', data: [], error: null, loadedCount: 0 },
   query: INITIAL_POKEMON_QUERY,
   details: {},
   search: { term: '', status: 'idle', data: [], error: null },
@@ -220,10 +228,28 @@ export class PokemonStore {
 
   // ── Internals ─────────────────────────────────────────────
 
+  /**
+   * Walks the paginated list query page by page (`expand`) until a short page signals the end,
+   * accumulating into the cache and publishing progress. A page that still fails after its
+   * retries fails the whole load, so the table never shows a silently truncated Pokédex.
+   */
   private fetchList$(): Observable<unknown> {
-    this.patch({ list: { ...this.state.list, status: 'loading', error: null } });
-    return this.api.getPokemonPage$(POKEDEX_SIZE, 0).pipe(
-      tap((pokemon) => this.patch({ list: { status: 'success', data: pokemon, error: null } })),
+    this.patch({ list: { ...this.state.list, status: 'loading', error: null, loadedCount: 0 } });
+    const fetchPage$ = (offset: number) =>
+      this.api.getPokemonPage$(POKEDEX_PAGE_SIZE, offset).pipe(map((items) => ({ offset, items })));
+
+    return fetchPage$(0).pipe(
+      expand(({ offset, items }) =>
+        items.length === POKEDEX_PAGE_SIZE ? fetchPage$(offset + POKEDEX_PAGE_SIZE) : EMPTY,
+      ),
+      scan((all: readonly Pokemon[], { items }) => [...all, ...items], []),
+      tap((all) => this.patch({ list: { ...this.state.list, loadedCount: all.length } })),
+      last(),
+      tap((pokemon) =>
+        this.patch({
+          list: { status: 'success', data: pokemon, error: null, loadedCount: pokemon.length },
+        }),
+      ),
       catchError((error: unknown) => {
         this.patch({
           list: {
