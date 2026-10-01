@@ -52,7 +52,7 @@ export class TeamStore {
   readonly teams$: Observable<readonly Team[]> = this.state$.pipe(
     map((state) => state.data),
     distinctUntilChanged(),
-    shareReplay({ bufferSize: 1, refCount: true }),
+    shareReplay(1),
   );
   readonly status$: Observable<LoadStatus> = this.state$.pipe(
     map((state) => state.status),
