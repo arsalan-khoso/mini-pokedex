@@ -1,0 +1,134 @@
+@use 'app/common/styles/shared' as *;
+
+.pokemon-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 32px;
+    padding: 0 4px 0 2px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-surface-3);
+    font-weight: 600;
+    animation: chip-in 0.15s ease-out;
+
+    img {
+      image-rendering: pixelated;
+    }
+  }
+
+  &__chip-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.12);
+    }
+  }
+
+  &__field {
+    position: relative;
+  }
+
+  &__dropdown {
+    @include card;
+    @include custom-scrollbar;
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    left: 0;
+    z-index: 20;
+    max-height: 320px;
+    overflow-y: auto;
+    background-color: var(--color-surface-3);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+  }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    margin: 0;
+    padding: 12px;
+    color: var(--color-text-muted);
+  }
+
+  &__options {
+    margin: 0;
+    padding: 4px;
+    list-style: none;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+
+    img {
+      image-rendering: pixelated;
+    }
+
+    &:hover,
+    &--active {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    &[aria-disabled='true'] {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+
+  &__option-name {
+    flex: 1;
+    font-weight: 600;
+  }
+
+  &__option-number {
+    margin-right: 4px;
+    color: var(--color-text-muted);
+    font-weight: 400;
+  }
+
+  &__option-types {
+    display: flex;
+    gap: 4px;
+  }
+
+  &__option-tag {
+    color: var(--color-text-muted);
+    font-size: 12px;
+  }
+}
+
+@keyframes chip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}

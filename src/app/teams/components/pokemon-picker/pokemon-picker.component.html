@@ -1,0 +1,118 @@
+<div class="pokemon-picker" [class.pokemon-picker--invalid]="invalid()">
+  @if (selected().length > 0) {
+    <ul class="pokemon-picker__chips" aria-label="Selected Pokémon">
+      @for (pokemon of selected(); track pokemon.id) {
+        <li class="pokemon-picker__chip">
+          @if (pokemon.spriteUrl) {
+            <img [src]="pokemon.spriteUrl" width="28" height="28" alt="" aria-hidden="true" />
+          }
+          <span>{{ pokemon.name | displayName }}</span>
+          <button
+            type="button"
+            class="pokemon-picker__chip-remove"
+            [attr.aria-label]="'Remove ' + (pokemon.name | displayName)"
+            [disabled]="isDisabled()"
+            (click)="remove(pokemon.id)"
+          >
+            <img src="assets/icons/ic_close.svg" width="14" height="14" alt="" aria-hidden="true" />
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  <div class="pokemon-picker__field">
+    <input
+      class="form-control"
+      [class.form-control--invalid]="invalid()"
+      type="text"
+      role="combobox"
+      autocomplete="off"
+      aria-autocomplete="list"
+      [id]="inputId()"
+      [value]="query()"
+      [placeholder]="isFull() ? 'Team is full' : 'Type at least 2 letters, e.g. pika'"
+      [disabled]="isDisabled() || isFull()"
+      [attr.aria-expanded]="showDropdown()"
+      [attr.aria-controls]="listboxId()"
+      [attr.aria-activedescendant]="activeOptionId()"
+      [attr.aria-invalid]="invalid()"
+      [attr.aria-describedby]="describedBy()"
+      (input)="onInput($event)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      (keydown)="onKeydown($event)"
+    />
+
+    @if (showDropdown()) {
+      <!-- mousedown is cancelled so clicking inside the dropdown does not blur the input first. -->
+      <div class="pokemon-picker__dropdown" (mousedown)="$event.preventDefault()">
+        @switch (dropdownState()) {
+          @case ('loading') {
+            <div class="pokemon-picker__status" role="status">
+              <app-spinner label="Searching Pokémon" />
+              Searching…
+            </div>
+          }
+          @case ('error') {
+            <app-error-state
+              [compact]="true"
+              title="Search failed"
+              [message]="searchError()"
+              (retry)="retrySearch()"
+            />
+          }
+          @case ('empty') {
+            <p class="pokemon-picker__status" role="status">
+              No Pokémon match "{{ query().trim() }}".
+            </p>
+          }
+          @case ('success') {
+            <ul
+              class="pokemon-picker__options"
+              role="listbox"
+              [id]="listboxId()"
+              aria-label="Matching Pokémon"
+            >
+              @for (pokemon of results(); track pokemon.id; let index = $index) {
+                <li
+                  class="pokemon-picker__option"
+                  role="option"
+                  tabindex="-1"
+                  [id]="optionId(index)"
+                  [class.pokemon-picker__option--active]="index === activeIndex()"
+                  [attr.aria-selected]="index === activeIndex()"
+                  [attr.aria-disabled]="selectedIds().has(pokemon.id)"
+                  (click)="add(pokemon)"
+                  (keydown.enter)="add(pokemon)"
+                >
+                  @if (pokemon.spriteUrl) {
+                    <img
+                      [src]="pokemon.spriteUrl"
+                      width="36"
+                      height="36"
+                      alt=""
+                      aria-hidden="true"
+                    />
+                  }
+                  <span class="pokemon-picker__option-name">
+                    <span class="pokemon-picker__option-number">#{{ pokemon.id }}</span>
+                    {{ pokemon.name | displayName }}
+                  </span>
+                  <span class="pokemon-picker__option-types">
+                    @for (type of pokemon.types; track type) {
+                      <app-type-badge [type]="type" />
+                    }
+                  </span>
+                  @if (selectedIds().has(pokemon.id)) {
+                    <span class="pokemon-picker__option-tag">Added</span>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        }
+      </div>
+    }
+  </div>
+</div>
