@@ -12,8 +12,8 @@ import {
   PokemonDto,
   SearchPokemonResponse,
 } from '../models/pokemon-api.model';
-import { Pokemon, PokemonDetails, PokemonSummary } from '../models/pokemon.model';
-import { toPokemon, toPokemonDetails, toPokemonSummary } from '../utils/pokemon-mapper.util';
+import { Pokemon, PokemonDetails } from '../models/pokemon.model';
+import { toPokemon, toPokemonDetails } from '../utils/pokemon-mapper.util';
 import {
   GET_ABILITIES_QUERY,
   GET_POKEMON_BY_ID_QUERY,
@@ -48,6 +48,22 @@ export class PokemonApiService {
     );
   }
 
+  /**
+   * Case-insensitive "contains" search on Pokémon names (species only), ordered by id.
+   * Used by the Pokédex table (no limit) and the team builder typeahead (small limit).
+   */
+  searchPokemonByName$(term: string, limit: number | null = null): Observable<Pokemon[]> {
+    return this.graphql
+      .request$<SearchPokemonResponse>(POKEAPI_GRAPHQL_URL, SEARCH_POKEMON_QUERY, {
+        pattern: `%${escapeLikePattern(term)}%`,
+        limit,
+      })
+      .pipe(
+        retryWithBackoff(),
+        map((data) => data.pokemon_v2_pokemon.map(toPokemon)),
+      );
+  }
+
   private getPokemonById$(id: number): Observable<PokemonDto> {
     return this.graphql
       .request$<GetPokemonByIdResponse>(POKEAPI_GRAPHQL_URL, GET_POKEMON_BY_ID_QUERY, { id })
@@ -68,19 +84,6 @@ export class PokemonApiService {
       .pipe(
         retryWithBackoff(),
         map((data) => data.pokemon_v2_pokemonability),
-      );
-  }
-
-  /** Case-insensitive "contains" search on Pokémon names, used by the team builder typeahead. */
-  searchPokemonByName$(term: string, limit: number): Observable<PokemonSummary[]> {
-    return this.graphql
-      .request$<SearchPokemonResponse>(POKEAPI_GRAPHQL_URL, SEARCH_POKEMON_QUERY, {
-        pattern: `%${escapeLikePattern(term)}%`,
-        limit,
-      })
-      .pipe(
-        retryWithBackoff(),
-        map((data) => data.pokemon_v2_pokemon.map(toPokemonSummary)),
       );
   }
 }

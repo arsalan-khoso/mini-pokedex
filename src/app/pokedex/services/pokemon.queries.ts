@@ -60,14 +60,15 @@ export const GET_ABILITIES_QUERY = /* GraphQL */ `
   }
 `;
 
+/** Name search with the same fields as the list, so results can feed the table directly. */
 export const SEARCH_POKEMON_QUERY = /* GraphQL */ `
-  query SearchPokemon($pattern: String!, $limit: Int!) {
+  query SearchPokemon($pattern: String!, $limit: Int) {
     pokemon_v2_pokemon(
       limit: $limit
       order_by: { id: asc }
       where: { name: { _ilike: $pattern }, id: { _lt: 10000 } }
     ) {
-      ${POKEMON_SUMMARY_FIELDS}
+      ${POKEMON_FIELDS}
     }
   }
 `;

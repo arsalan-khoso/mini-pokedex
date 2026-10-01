@@ -61,7 +61,7 @@
           <tr>
             <td [attr.colspan]="columnCount">
               <app-error-state
-                title="The Pokédex couldn't be loaded"
+                [title]="errorTitle()"
                 [message]="error() ?? 'Please try again.'"
                 (retry)="retry.emit()"
               />

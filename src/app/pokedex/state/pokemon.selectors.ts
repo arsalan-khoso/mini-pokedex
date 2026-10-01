@@ -2,7 +2,18 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, combineLatest, distinctUntilChanged, map, shareReplay } from 'rxjs';
 import { AsyncResource, LoadStatus } from '../../common/models/load-status.model';
 import { Pokemon, PokemonDetails, SortColumn, SortDirection } from '../models/pokemon.model';
-import { PokemonSearchState, PokemonStore, PokemonTableQuery } from './pokemon.store';
+import {
+  PokemonSearchState,
+  PokemonStore,
+  PokemonTableQuery,
+  PokemonTableSearchState,
+} from './pokemon.store';
+
+export interface TableSource {
+  status: LoadStatus;
+  error: string | null;
+  items: readonly Pokemon[];
+}
 
 export interface PokemonFilter {
   search: string;
@@ -27,6 +38,25 @@ export const IDLE_DETAILS: AsyncResource<PokemonDetails | null> = {
 };
 
 // ── Pure projections (unit-tested without Angular) ─────────
+
+const NO_POKEMON: readonly Pokemon[] = [];
+
+/**
+ * Without a search term the table shows the cached list. With one, it shows the API results for
+ * exactly that term; results for an older term (still in flight or superseded) count as loading.
+ */
+export function selectTableSource(
+  list: AsyncResource<readonly Pokemon[]>,
+  search: string,
+  results: PokemonTableSearchState,
+): TableSource {
+  const term = search.trim();
+  if (!term) return { status: list.status, error: list.error, items: list.data };
+  if (results.term !== term || results.status === 'idle') {
+    return { status: 'loading', error: null, items: NO_POKEMON };
+  }
+  return { status: results.status, error: results.error, items: results.data };
+}
 
 export function filterPokemon(
   items: readonly Pokemon[],
@@ -126,13 +156,55 @@ export class PokemonSelectors {
     shareReplay(1),
   );
 
-  readonly pokemonById$: Observable<ReadonlyMap<number, Pokemon>> = this.allPokemon$.pipe(
-    map((items) => new Map(items.map((pokemon) => [pokemon.id, pokemon]))),
+  private readonly tableSearchResults$: Observable<PokemonTableSearchState> =
+    this.store.state$.pipe(
+      map((state) => state.tableSearch),
+      distinctUntilChanged(),
+    );
+
+  /** Cached list plus any search results, so a row picked from a search can always be looked up. */
+  readonly pokemonById$: Observable<ReadonlyMap<number, Pokemon>> = combineLatest([
+    this.allPokemon$,
+    this.tableSearchResults$.pipe(
+      map((search) => search.data),
+      distinctUntilChanged(),
+    ),
+  ]).pipe(
+    map(([all, found]) => new Map([...all, ...found].map((pokemon) => [pokemon.id, pokemon]))),
     shareReplay(1),
   );
 
+  /** What the table renders from: the cached Pokédex, or API search results while searching. */
+  private readonly tableSource$: Observable<TableSource> = combineLatest([
+    this.store.state$.pipe(
+      map((state) => state.list),
+      distinctUntilChanged(),
+    ),
+    this.query$.pipe(
+      map((query) => query.search),
+      distinctUntilChanged(),
+    ),
+    this.tableSearchResults$,
+  ]).pipe(
+    map(([list, search, results]) => selectTableSource(list, search, results)),
+    shareReplay(1),
+  );
+
+  readonly tableStatus$: Observable<LoadStatus> = this.tableSource$.pipe(
+    map((source) => source.status),
+    distinctUntilChanged(),
+  );
+
+  readonly tableError$: Observable<string | null> = this.tableSource$.pipe(
+    map((source) => source.error),
+    distinctUntilChanged(),
+  );
+
   readonly filteredPokemon$: Observable<readonly Pokemon[]> = combineLatest([
-    this.allPokemon$,
+    this.tableSource$.pipe(
+      map((source) => source.items),
+      distinctUntilChanged(),
+    ),
     this.query$.pipe(
       map(({ search, type }): PokemonFilter => ({ search, type })),
       distinctUntilChanged((a, b) => a.search === b.search && a.type === b.type),

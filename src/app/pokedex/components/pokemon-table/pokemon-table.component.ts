@@ -29,6 +29,7 @@ export class PokemonTableComponent {
   readonly rows = input.required<readonly Pokemon[]>();
   readonly status = input.required<LoadStatus>();
   readonly error = input<string | null>(null);
+  readonly errorTitle = input("The Pokédex couldn't be loaded");
   readonly sortColumn = input.required<SortColumn>();
   readonly sortDirection = input.required<SortDirection>();
   readonly selectedId = input<number | null>(null);

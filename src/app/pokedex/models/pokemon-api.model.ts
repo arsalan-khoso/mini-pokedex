@@ -45,5 +45,5 @@ export interface GetAbilitiesResponse {
 }
 
 export interface SearchPokemonResponse {
-  pokemon_v2_pokemon: PokemonSummaryDto[];
+  pokemon_v2_pokemon: PokemonDto[];
 }

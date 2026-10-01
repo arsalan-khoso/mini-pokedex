@@ -50,6 +50,11 @@ export interface PokemonSearchState extends AsyncResource<readonly PokemonSummar
   term: string;
 }
 
+/** Server-side name search results for the Pokédex table; `term` is the trimmed query sent. */
+export interface PokemonTableSearchState extends AsyncResource<readonly Pokemon[]> {
+  term: string;
+}
+
 export interface PokemonListState extends AsyncResource<readonly Pokemon[]> {
   /** Pokémon received so far while paging through the list query. */
   loadedCount: number;
@@ -58,6 +63,7 @@ export interface PokemonListState extends AsyncResource<readonly Pokemon[]> {
 export interface PokemonState {
   list: PokemonListState;
   query: PokemonTableQuery;
+  tableSearch: PokemonTableSearchState;
   details: Readonly<Record<number, AsyncResource<PokemonDetails | null>>>;
   search: PokemonSearchState;
 }
@@ -74,6 +80,7 @@ export const INITIAL_POKEMON_QUERY: PokemonTableQuery = {
 const INITIAL_STATE: PokemonState = {
   list: { status: 'idle', data: [], error: null, loadedCount: 0 },
   query: INITIAL_POKEMON_QUERY,
+  tableSearch: { term: '', status: 'idle', data: [], error: null },
   details: {},
   search: { term: '', status: 'idle', data: [], error: null },
 };
@@ -101,6 +108,7 @@ export class PokemonStore {
   private readonly listRequests = new Subject<void>();
   private readonly detailRequests = new Subject<number>();
   private readonly tableSearchInput = new Subject<string>();
+  private readonly tableSearchRetries = new Subject<void>();
   private readonly autocompleteInput = new Subject<string>();
   private readonly autocompleteRetries = new Subject<void>();
 
@@ -119,15 +127,21 @@ export class PokemonStore {
       )
       .subscribe();
 
-    // Not trimmed here: the value is echoed back into the input, and trimming would eat a typed
-    // trailing space ("mr " → "mr"). `filterPokemon` trims when matching instead.
-    this.tableSearchInput
+    // Pokédex name search: debounceTime → distinctUntilChanged → switchMap, so a new term cancels
+    // the request for the previous one. The raw value is stored untrimmed because it is echoed
+    // back into the input, and trimming would eat a typed trailing space ("mr " → "mr").
+    const appliedSearch$ = this.tableSearchInput.pipe(
+      debounceTime(SEARCH_DEBOUNCE_MS),
+      distinctUntilChanged(),
+      tap((search) => this.patchQuery({ search, page: 0 })),
+    );
+    const retriedSearch$ = this.tableSearchRetries.pipe(map(() => this.state.query.search));
+    merge(appliedSearch$, retriedSearch$)
       .pipe(
-        debounceTime(SEARCH_DEBOUNCE_MS),
-        distinctUntilChanged(),
+        switchMap((search) => this.fetchTableSearch$(search.trim())),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((search) => this.patchQuery({ search, page: 0 }));
+      .subscribe();
 
     const debouncedTerms$ = this.autocompleteInput.pipe(
       map((term) => term.trim()),
@@ -164,9 +178,17 @@ export class PokemonStore {
 
   // ── Table query (filters, sorting, paging) ────────────────
 
-  /** Queues a name filter; applied after a 300ms pause in typing. Resets to the first page. */
+  /**
+   * Queues a name search. After a 300ms pause in typing it is sent to the API (stale requests
+   * are cancelled) and the table switches to the results. Resets to the first page.
+   */
   setSearch(term: string): void {
     this.tableSearchInput.next(term);
+  }
+
+  /** Repeats the current table name search after a failure. */
+  retryTableSearch(): void {
+    this.tableSearchRetries.next();
   }
 
   /** Filters by a single type, or clears the filter with `null`. Resets to the first page. */
@@ -256,6 +278,30 @@ export class PokemonStore {
             ...this.state.list,
             status: 'error',
             error: toUserMessage(error, 'load the Pokédex'),
+          },
+        });
+        return EMPTY;
+      }),
+    );
+  }
+
+  private fetchTableSearch$(term: string): Observable<unknown> {
+    if (!term) {
+      this.patch({ tableSearch: { term: '', status: 'idle', data: [], error: null } });
+      return EMPTY;
+    }
+    this.patch({ tableSearch: { term, status: 'loading', data: [], error: null } });
+    return this.api.searchPokemonByName$(term).pipe(
+      tap((results) =>
+        this.patch({ tableSearch: { term, status: 'success', data: results, error: null } }),
+      ),
+      catchError((error: unknown) => {
+        this.patch({
+          tableSearch: {
+            term,
+            status: 'error',
+            data: [],
+            error: toUserMessage(error, `search for "${term}"`),
           },
         });
         return EMPTY;

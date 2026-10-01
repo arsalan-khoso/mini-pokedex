@@ -30,22 +30,27 @@ export class PokedexPage {
   protected readonly pageSizeOptions = PAGE_SIZE_OPTIONS;
 
   // The store is BehaviorSubject-backed, so these streams emit synchronously on subscribe.
-  protected readonly status = toSignal(this.selectors.listStatus$, { requireSync: true });
-  protected readonly error = toSignal(this.selectors.listError$, { requireSync: true });
+  protected readonly status = toSignal(this.selectors.tableStatus$, { requireSync: true });
+  protected readonly error = toSignal(this.selectors.tableError$, { requireSync: true });
   protected readonly query = toSignal(this.selectors.query$, { requireSync: true });
   protected readonly page = toSignal(this.selectors.pagedPokemon$, { requireSync: true });
   protected readonly types = toSignal(this.selectors.availableTypes$, { requireSync: true });
   private readonly pokemonById = toSignal(this.selectors.pokemonById$, { requireSync: true });
-
+  private readonly listStatus = toSignal(this.selectors.listStatus$, { requireSync: true });
   private readonly loadedCount = toSignal(this.selectors.listLoadedCount$, { requireSync: true });
 
-  protected readonly loadProgressLabel = computed(() =>
-    this.status() === 'loading' ? `Loading ${this.loadedCount()} / ${POKEDEX_SIZE}` : null,
+  protected readonly isSearching = computed(() => this.query().search.trim() !== '');
+  protected readonly hasActiveFilters = computed(
+    () => this.isSearching() || this.query().type !== null,
   );
-
-  protected readonly hasActiveFilters = computed(() => {
-    const { search, type } = this.query();
-    return search.trim() !== '' || type !== null;
+  protected readonly errorTitle = computed(() =>
+    this.isSearching() ? 'Search failed' : "The Pokédex couldn't be loaded",
+  );
+  protected readonly loadProgressLabel = computed(() => {
+    if (this.isSearching()) return this.status() === 'loading' ? 'Searching…' : null;
+    return this.listStatus() === 'loading'
+      ? `Loading ${this.loadedCount()} / ${POKEDEX_SIZE}`
+      : null;
   });
 
   // UI state for the detail panel.
@@ -91,7 +96,11 @@ export class PokedexPage {
   }
 
   protected onRetry(): void {
-    this.store.retryLoadPokemon();
+    if (this.isSearching()) {
+      this.store.retryTableSearch();
+    } else {
+      this.store.retryLoadPokemon();
+    }
   }
 
   protected onRowSelect(pokemon: Pokemon): void {
