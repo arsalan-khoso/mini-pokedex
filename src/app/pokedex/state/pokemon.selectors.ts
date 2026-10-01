@@ -107,23 +107,23 @@ export class PokemonSelectors {
   readonly allPokemon$: Observable<readonly Pokemon[]> = this.store.state$.pipe(
     map((state) => state.list.data),
     distinctUntilChanged(),
-    shareReplay({ bufferSize: 1, refCount: true }),
+    shareReplay(1),
   );
 
   readonly query$: Observable<PokemonTableQuery> = this.store.state$.pipe(
     map((state) => state.query),
     distinctUntilChanged(),
-    shareReplay({ bufferSize: 1, refCount: true }),
+    shareReplay(1),
   );
 
   readonly availableTypes$: Observable<readonly string[]> = this.allPokemon$.pipe(
     map(collectTypes),
-    shareReplay({ bufferSize: 1, refCount: true }),
+    shareReplay(1),
   );
 
   readonly pokemonById$: Observable<ReadonlyMap<number, Pokemon>> = this.allPokemon$.pipe(
     map((items) => new Map(items.map((pokemon) => [pokemon.id, pokemon]))),
-    shareReplay({ bufferSize: 1, refCount: true }),
+    shareReplay(1),
   );
 
   readonly filteredPokemon$: Observable<readonly Pokemon[]> = combineLatest([
@@ -134,7 +134,7 @@ export class PokemonSelectors {
     ),
   ]).pipe(
     map(([items, filter]) => filterPokemon(items, filter)),
-    shareReplay({ bufferSize: 1, refCount: true }),
+    shareReplay(1),
   );
 
   readonly sortedPokemon$: Observable<readonly Pokemon[]> = combineLatest([
@@ -147,7 +147,7 @@ export class PokemonSelectors {
     ),
   ]).pipe(
     map(([items, sort]) => sortPokemon(items, sort.sortColumn, sort.sortDirection)),
-    shareReplay({ bufferSize: 1, refCount: true }),
+    shareReplay(1),
   );
 
   readonly pagedPokemon$: Observable<PageSlice<Pokemon>> = combineLatest([
@@ -158,7 +158,7 @@ export class PokemonSelectors {
     ),
   ]).pipe(
     map(([items, paging]) => paginate(items, paging.page, paging.pageSize)),
-    shareReplay({ bufferSize: 1, refCount: true }),
+    shareReplay(1),
   );
 
   readonly search$: Observable<PokemonSearchState> = this.store.state$.pipe(
