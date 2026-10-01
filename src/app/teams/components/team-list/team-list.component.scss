@@ -1,0 +1,118 @@
+@use 'app/common/styles/shared' as *;
+
+.team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__title {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__card {
+    @include card;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition:
+      border-color 0.15s ease,
+      opacity 0.15s ease;
+    animation: card-in 0.2s ease-out;
+
+    &--skeleton {
+      padding: 14px 16px;
+    }
+
+    &--selected {
+      border-color: var(--color-primary);
+      box-shadow: inset 0 0 0 1px var(--color-primary);
+    }
+
+    &--pending {
+      opacity: 0.65;
+    }
+  }
+
+  &__select {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    padding: 14px 56px 14px 16px;
+    border: 0;
+    border-radius: inherit;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.04);
+    }
+
+    &:disabled {
+      cursor: progress;
+    }
+  }
+
+  &__name {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-text-muted);
+    font-size: 12px;
+  }
+
+  &__sprites {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  &__sprite {
+    width: 40px;
+    height: 40px;
+    image-rendering: pixelated;
+
+    &--fallback {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background-color: var(--color-surface-3);
+      color: var(--color-text-muted);
+      font-size: 10px;
+    }
+  }
+
+  &__delete {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}

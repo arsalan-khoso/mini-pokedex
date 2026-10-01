@@ -1,0 +1,76 @@
+<section class="team-summary" aria-labelledby="team-summary-title">
+  <h2 id="team-summary-title" class="team-summary__title">{{ team().name }}</h2>
+
+  @switch (pokemonStatus()) {
+    @case ('error') {
+      <app-error-state
+        title="Team stats unavailable"
+        [message]="pokemonError() ?? 'Please try again.'"
+        (retry)="retry.emit()"
+      />
+    }
+    @case ('success') {
+      @if (members().length === 0) {
+        <app-empty-state title="This team has no Pokémon" message="Add Pokémon to see its stats." />
+      } @else {
+        <div class="team-summary__grid">
+          <div class="team-summary__block">
+            <h3 class="team-summary__heading">Type distribution</h3>
+            <ul class="team-summary__types">
+              @for (entry of typeDistribution(); track entry.type) {
+                <li class="team-summary__type-row">
+                  <app-type-badge [type]="entry.type" />
+                  <span class="team-summary__bar" aria-hidden="true">
+                    <span
+                      class="team-summary__bar-fill"
+                      [style.width.%]="(entry.count / maxTypeCount()) * 100"
+                      [style.background-color]="typeColors[entry.type]"
+                    ></span>
+                  </span>
+                  <span class="team-summary__count">
+                    {{ entry.count
+                    }}<span class="visually-hidden"> of {{ members().length }} Pokémon</span>
+                  </span>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <div class="team-summary__block">
+            <h3 class="team-summary__heading">Total base stats</h3>
+            <dl class="team-summary__stats">
+              @for (column of statColumns; track column.key) {
+                <div class="team-summary__stat">
+                  <dt>{{ column.label }}</dt>
+                  <dd>{{ statTotals().stats[column.key] }}</dd>
+                </div>
+              }
+              <div class="team-summary__stat team-summary__stat--total">
+                <dt>Total</dt>
+                <dd>{{ statTotals().total }}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <p class="team-summary__members">
+          @for (pokemon of members(); track pokemon.id; let last = $last) {
+            {{ pokemon.name | displayName }}{{ last ? '' : ', ' }}
+          }
+        </p>
+      }
+    }
+    @default {
+      <div class="team-summary__grid" aria-label="Loading team stats">
+        @for (block of [0, 1]; track block) {
+          <div class="team-summary__block">
+            <app-skeleton width="40%" height="14px" />
+            @for (row of [0, 1, 2, 3]; track row) {
+              <app-skeleton height="18px" />
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</section>

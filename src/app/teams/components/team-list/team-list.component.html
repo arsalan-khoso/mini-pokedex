@@ -1,0 +1,95 @@
+<section
+  class="team-list"
+  aria-labelledby="team-list-title"
+  [attr.aria-busy]="status() === 'loading'"
+>
+  <h2 id="team-list-title" class="team-list__title">Teams</h2>
+
+  @if (status() === 'error') {
+    <app-error-state
+      title="Teams couldn't be loaded"
+      [message]="
+        (error() ?? 'Please try again.') +
+        ' Make sure the mock server is running (npm run mock-server).'
+      "
+      (retry)="retry.emit()"
+    />
+  }
+
+  @if (status() === 'loading' || status() === 'idle') {
+    <ul class="team-list__items" aria-label="Loading teams">
+      @for (card of skeletonCards; track card) {
+        <li class="team-list__card team-list__card--skeleton">
+          <app-skeleton width="50%" height="18px" />
+          <app-skeleton width="30%" height="12px" />
+          <div class="team-list__sprites">
+            @for (slot of spriteSlots; track slot) {
+              <app-skeleton width="40px" height="40px" radius="50%" />
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  } @else if (hasTeams()) {
+    <ul class="team-list__items">
+      @for (team of teams(); track team.id) {
+        <li
+          class="team-list__card"
+          [class.team-list__card--selected]="team.id === selectedId()"
+          [class.team-list__card--pending]="team.isPending"
+        >
+          <button
+            type="button"
+            class="team-list__select"
+            [disabled]="team.isPending"
+            [attr.aria-pressed]="team.id === selectedId()"
+            (click)="teamSelect.emit(team.id)"
+          >
+            <span class="team-list__name">{{ team.name }}</span>
+            <span class="team-list__meta">
+              @if (team.isPending) {
+                <app-spinner [size]="12" label="Saving team" /> Saving…
+              } @else {
+                {{ team.trainerName ?? 'Unknown trainer' }} ·
+                {{ team.createdAt | date: 'mediumDate' }}
+              }
+            </span>
+            <span class="team-list__sprites">
+              @for (id of team.pokemonIds; track id) {
+                @if (pokemonById().get(id); as pokemon) {
+                  <img
+                    class="team-list__sprite"
+                    [src]="pokemon.spriteUrl"
+                    width="40"
+                    height="40"
+                    [alt]="pokemon.name | displayName"
+                    [title]="pokemon.name | displayName"
+                  />
+                } @else {
+                  <span class="team-list__sprite team-list__sprite--fallback">#{{ id }}</span>
+                }
+              }
+            </span>
+          </button>
+          <button
+            type="button"
+            class="btn btn--ghost btn--icon team-list__delete"
+            [disabled]="team.isPending"
+            [attr.aria-label]="'Delete team ' + team.name"
+            (click)="teamDelete.emit(team)"
+          >
+            <img
+              src="assets/icons/ic_delete.svg"
+              width="16"
+              height="16"
+              alt=""
+              aria-hidden="true"
+            />
+          </button>
+        </li>
+      }
+    </ul>
+  } @else if (status() === 'success') {
+    <app-empty-state title="No teams yet" message="Build your first team with the form." />
+  }
+</section>

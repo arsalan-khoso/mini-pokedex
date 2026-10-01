@@ -1,0 +1,42 @@
+<div class="teams-page">
+  <header class="teams-page__header">
+    <h2 class="teams-page__title">Team builder</h2>
+    <p class="teams-page__subtitle">
+      Create teams of up to six Pokémon and select one to see its type coverage and stats.
+    </p>
+  </header>
+
+  <div class="teams-page__layout">
+    <app-team-builder-form class="teams-page__form" />
+
+    <div class="teams-page__main">
+      @if (selectedTeam(); as team) {
+        <app-team-summary
+          [team]="team"
+          [pokemonById]="pokemonById()"
+          [pokemonStatus]="pokemonStatus()"
+          [pokemonError]="pokemonError()"
+          (retry)="onRetryPokemon()"
+        />
+      } @else if (teams().length > 0) {
+        <app-empty-state
+          class="teams-page__hint"
+          [compact]="true"
+          title="Select a team"
+          message="Its type distribution and total base stats will appear here."
+        />
+      }
+
+      <app-team-list
+        [teams]="teams()"
+        [status]="teamsStatus()"
+        [error]="teamsError()"
+        [selectedId]="selectedTeamId()"
+        [pokemonById]="pokemonById()"
+        (teamSelect)="onTeamSelect($event)"
+        (teamDelete)="onTeamDelete($event)"
+        (retry)="onRetryTeams()"
+      />
+    </div>
+  </div>
+</div>

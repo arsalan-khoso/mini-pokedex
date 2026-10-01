@@ -1,0 +1,50 @@
+@use 'app/common/styles/shared' as *;
+
+.teams-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  &__title {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  &__subtitle {
+    margin: 4px 0 0;
+    color: var(--color-text-muted);
+  }
+
+  &__layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 400px) 1fr;
+    align-items: start;
+    gap: 24px;
+
+    @media (max-width: 860px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__form {
+    position: sticky;
+    top: 80px;
+
+    @media (max-width: 860px) {
+      position: static;
+    }
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  &__hint {
+    @include card;
+  }
+}
