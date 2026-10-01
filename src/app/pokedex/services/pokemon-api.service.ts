@@ -1,18 +1,22 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs';
 import { POKEAPI_GRAPHQL_URL } from '../../common/constants/api.constants';
 import { retryWithBackoff } from '../../common/utils/retry-with-backoff.util';
 import { GraphqlRequestError } from '../../core/graphql/graphql.model';
 import { GraphqlService } from '../../core/graphql/graphql.service';
 import {
-  GetPokemonDetailsResponse,
+  GetAbilitiesResponse,
+  GetPokemonByIdResponse,
   GetPokemonListResponse,
+  PokemonAbilityDto,
+  PokemonDto,
   SearchPokemonResponse,
 } from '../models/pokemon-api.model';
 import { Pokemon, PokemonDetails, PokemonSummary } from '../models/pokemon.model';
 import { toPokemon, toPokemonDetails, toPokemonSummary } from '../utils/pokemon-mapper.util';
 import {
-  GET_POKEMON_DETAILS_QUERY,
+  GET_ABILITIES_QUERY,
+  GET_POKEMON_BY_ID_QUERY,
   GET_POKEMON_LIST_QUERY,
   SEARCH_POKEMON_QUERY,
 } from './pokemon.queries';
@@ -34,18 +38,36 @@ export class PokemonApiService {
       );
   }
 
-  /** Fetches one Pokémon by id with base stats and English ability descriptions. */
+  /**
+   * Fetches one Pokémon by id with base stats and English ability descriptions.
+   * Stats (`GetPokemonById`) and abilities (`GetAbilities`) are requested in parallel.
+   */
   getPokemonDetails$(id: number): Observable<PokemonDetails> {
+    return forkJoin([this.getPokemonById$(id), this.getAbilities$(id)]).pipe(
+      map(([pokemon, abilities]) => toPokemonDetails(pokemon, abilities)),
+    );
+  }
+
+  private getPokemonById$(id: number): Observable<PokemonDto> {
     return this.graphql
-      .request$<GetPokemonDetailsResponse>(POKEAPI_GRAPHQL_URL, GET_POKEMON_DETAILS_QUERY, { id })
+      .request$<GetPokemonByIdResponse>(POKEAPI_GRAPHQL_URL, GET_POKEMON_BY_ID_QUERY, { id })
       .pipe(
         retryWithBackoff(),
         map((data) => {
           if (!data.pokemon_v2_pokemon_by_pk) {
             throw new GraphqlRequestError([`Pokémon #${id} was not found.`]);
           }
-          return toPokemonDetails(data.pokemon_v2_pokemon_by_pk);
+          return data.pokemon_v2_pokemon_by_pk;
         }),
+      );
+  }
+
+  private getAbilities$(pokemonId: number): Observable<PokemonAbilityDto[]> {
+    return this.graphql
+      .request$<GetAbilitiesResponse>(POKEAPI_GRAPHQL_URL, GET_ABILITIES_QUERY, { pokemonId })
+      .pipe(
+        retryWithBackoff(),
+        map((data) => data.pokemon_v2_pokemonability),
       );
   }
 

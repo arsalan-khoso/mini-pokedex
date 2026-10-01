@@ -1,6 +1,5 @@
 import {
   PokemonAbilityDto,
-  PokemonDetailsDto,
   PokemonDto,
   PokemonStatDto,
   PokemonSummaryDto,
@@ -45,12 +44,17 @@ export function toPokemon(dto: PokemonDto): Pokemon {
   };
 }
 
-export function toPokemonDetails(dto: PokemonDetailsDto): PokemonDetails {
+/** Combines the by-id stats response with the `GetAbilities` response; hidden abilities go last. */
+export function toPokemonDetails(
+  dto: PokemonDto,
+  abilityDtos: readonly PokemonAbilityDto[],
+): PokemonDetails {
   return {
     ...toPokemon(dto),
-    abilities: dto.pokemon_v2_pokemonabilities
+    abilities: abilityDtos
       .map(toAbility)
-      .filter((ability): ability is PokemonAbility => ability !== null),
+      .filter((ability): ability is PokemonAbility => ability !== null)
+      .sort((a, b) => Number(a.isHidden) - Number(b.isHidden)),
   };
 }
 

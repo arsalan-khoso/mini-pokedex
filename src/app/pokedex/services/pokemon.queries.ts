@@ -37,19 +37,25 @@ export const GET_POKEMON_LIST_QUERY = /* GraphQL */ `
   }
 `;
 
-export const GET_POKEMON_DETAILS_QUERY = /* GraphQL */ `
-  query GetPokemonDetails($id: Int!) {
+export const GET_POKEMON_BY_ID_QUERY = /* GraphQL */ `
+  query GetPokemonById($id: Int!) {
     pokemon_v2_pokemon_by_pk(id: $id) {
       ${POKEMON_FIELDS}
-      pokemon_v2_pokemonabilities(order_by: { slot: asc }) {
-        is_hidden
-        pokemon_v2_ability {
-          name
-          pokemon_v2_abilityeffecttexts(where: { language_id: { _eq: 9 } }) {
-            short_effect
-          }
+    }
+  }
+`;
+
+/** The assessment brief's abilities query, used as specified. */
+export const GET_ABILITIES_QUERY = /* GraphQL */ `
+  query GetAbilities($pokemonId: Int) {
+    pokemon_v2_pokemonability(where: { pokemon_id: { _eq: $pokemonId } }) {
+      pokemon_v2_ability {
+        name
+        pokemon_v2_abilityeffecttexts(where: { language_id: { _eq: 9 } }) {
+          short_effect
         }
       }
+      is_hidden
     }
   }
 `;

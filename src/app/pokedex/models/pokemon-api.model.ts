@@ -32,16 +32,16 @@ export interface PokemonAbilityDto {
   } | null;
 }
 
-export interface PokemonDetailsDto extends PokemonDto {
-  pokemon_v2_pokemonabilities: PokemonAbilityDto[];
-}
-
 export interface GetPokemonListResponse {
   pokemon_v2_pokemon: PokemonDto[];
 }
 
-export interface GetPokemonDetailsResponse {
-  pokemon_v2_pokemon_by_pk: PokemonDetailsDto | null;
+export interface GetPokemonByIdResponse {
+  pokemon_v2_pokemon_by_pk: PokemonDto | null;
+}
+
+export interface GetAbilitiesResponse {
+  pokemon_v2_pokemonability: PokemonAbilityDto[];
 }
 
 export interface SearchPokemonResponse {
