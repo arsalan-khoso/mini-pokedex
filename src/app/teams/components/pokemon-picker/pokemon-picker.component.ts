@@ -27,6 +27,7 @@ type DropdownState = 'loading' | 'error' | 'empty' | 'success';
  */
 @Component({
   selector: 'app-pokemon-picker',
+  standalone: true,
   imports: [DisplayNamePipe, ErrorStateComponent, SpinnerComponent, TypeBadgeComponent],
   templateUrl: './pokemon-picker.component.html',
   styleUrl: './pokemon-picker.component.scss',

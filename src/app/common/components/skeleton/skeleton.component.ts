@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 /** Shimmering placeholder block used while content loads, sized to match the real content. */
 @Component({
   selector: 'app-skeleton',
+  standalone: true,
   templateUrl: './skeleton.component.html',
   styleUrl: './skeleton.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -12,6 +12,7 @@ import { countTypes, sumTeamStats } from '../../utils/team-stats.util';
 
 @Component({
   selector: 'app-team-summary',
+  standalone: true,
   imports: [
     DisplayNamePipe,
     EmptyStateComponent,

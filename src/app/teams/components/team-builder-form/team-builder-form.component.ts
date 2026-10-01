@@ -20,6 +20,7 @@ import { PokemonPickerComponent } from '../pokemon-picker/pokemon-picker.compone
 
 @Component({
   selector: 'app-team-builder-form',
+  standalone: true,
   imports: [PokemonPickerComponent, ReactiveFormsModule, SpinnerComponent],
   templateUrl: './team-builder-form.component.html',
   styleUrl: './team-builder-form.component.scss',

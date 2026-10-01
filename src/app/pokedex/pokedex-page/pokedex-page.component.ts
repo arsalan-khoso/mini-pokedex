@@ -12,6 +12,7 @@ import { PokemonStore } from '../state/pokemon.store';
 
 @Component({
   selector: 'app-pokedex-page',
+  standalone: true,
   imports: [
     PaginatorComponent,
     PokemonDetailPanelComponent,

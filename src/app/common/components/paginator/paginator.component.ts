@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 
 @Component({
   selector: 'app-paginator',
+  standalone: true,
   templateUrl: './paginator.component.html',
   styleUrl: './paginator.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

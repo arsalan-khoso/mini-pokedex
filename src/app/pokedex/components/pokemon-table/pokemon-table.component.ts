@@ -13,6 +13,7 @@ const COLUMN_COUNT = 3 + STAT_COLUMNS.length + 1;
 
 @Component({
   selector: 'app-pokemon-table',
+  standalone: true,
   imports: [
     DisplayNamePipe,
     EmptyStateComponent,

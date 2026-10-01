@@ -12,6 +12,7 @@ import { Team } from '../../models/team.model';
 
 @Component({
   selector: 'app-team-list',
+  standalone: true,
   imports: [
     DatePipe,
     DisplayNamePipe,

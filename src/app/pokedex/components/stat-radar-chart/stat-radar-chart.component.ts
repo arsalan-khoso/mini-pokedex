@@ -29,6 +29,7 @@ const SCALE_MAX = 160;
 
 @Component({
   selector: 'app-stat-radar-chart',
+  standalone: true,
   templateUrl: './stat-radar-chart.component.html',
   styleUrl: './stat-radar-chart.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

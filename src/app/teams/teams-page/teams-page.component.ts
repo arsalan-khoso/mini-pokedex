@@ -20,6 +20,7 @@ import { TeamStore } from '../state/team.store';
 
 @Component({
   selector: 'app-teams-page',
+  standalone: true,
   imports: [EmptyStateComponent, TeamBuilderFormComponent, TeamListComponent, TeamSummaryComponent],
   templateUrl: './teams-page.component.html',
   styleUrl: './teams-page.component.scss',

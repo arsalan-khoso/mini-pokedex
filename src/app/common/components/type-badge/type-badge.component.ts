@@ -5,6 +5,7 @@ const FALLBACK_COLOR = '#68a090';
 
 @Component({
   selector: 'app-type-badge',
+  standalone: true,
   templateUrl: './type-badge.component.html',
   styleUrl: './type-badge.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

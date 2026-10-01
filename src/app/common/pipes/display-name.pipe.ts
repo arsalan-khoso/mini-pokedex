@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 /** Turns API slugs into labels: "mr-mime" → "Mr Mime", "special-attack" → "Special Attack". */
-@Pipe({ name: 'displayName' })
+@Pipe({ name: 'displayName', standalone: true })
 export class DisplayNamePipe implements PipeTransform {
   transform(slug: string | null | undefined): string {
     if (!slug) return '';

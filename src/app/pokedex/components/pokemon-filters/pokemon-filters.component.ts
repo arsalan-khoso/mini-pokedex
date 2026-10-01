@@ -3,6 +3,7 @@ import { DisplayNamePipe } from '../../../common/pipes/display-name.pipe';
 
 @Component({
   selector: 'app-pokemon-filters',
+  standalone: true,
   imports: [DisplayNamePipe],
   templateUrl: './pokemon-filters.component.html',
   styleUrl: './pokemon-filters.component.scss',

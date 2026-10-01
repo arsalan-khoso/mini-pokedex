@@ -22,6 +22,7 @@ const MAX_BASE_STAT = 255;
 
 @Component({
   selector: 'app-pokemon-detail-panel',
+  standalone: true,
   imports: [
     DisplayNamePipe,
     ErrorStateComponent,
