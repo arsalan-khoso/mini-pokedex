@@ -1,0 +1,65 @@
+<form class="team-form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <h2 class="team-form__title">Build a team</h2>
+
+  <div class="team-form__field">
+    <div class="team-form__label-row">
+      <label class="team-form__label" for="team-name">Team name</label>
+      <span
+        class="team-form__counter"
+        [class.team-form__counter--over]="nameLength() > nameMaxLength"
+      >
+        {{ nameLength() }}/{{ nameMaxLength }}
+      </span>
+    </div>
+    <input
+      id="team-name"
+      class="form-control"
+      type="text"
+      formControlName="name"
+      placeholder="e.g. Rain Dance"
+      autocomplete="off"
+      [class.form-control--invalid]="nameError()"
+      [attr.aria-invalid]="!!nameError()"
+      [attr.aria-describedby]="nameError() ? 'team-name-error' : 'team-name-hint'"
+    />
+    @if (nameError(); as message) {
+      <p id="team-name-error" class="team-form__error" role="alert">{{ message }}</p>
+    } @else if (isCheckingName()) {
+      <p id="team-name-hint" class="team-form__hint" role="status">
+        <app-spinner [size]="12" label="Checking name" /> Checking availability…
+      </p>
+    } @else {
+      <p id="team-name-hint" class="team-form__hint">3–30 characters, unique across teams.</p>
+    }
+  </div>
+
+  <div class="team-form__field">
+    <div class="team-form__label-row">
+      <label class="team-form__label" for="team-pokemon">Pokémon</label>
+      <span class="team-form__counter">{{ selectedCount() }}/{{ maxPokemon }}</span>
+    </div>
+    <app-pokemon-picker
+      inputId="team-pokemon"
+      formControlName="pokemonIds"
+      [maxSelection]="maxPokemon"
+      [invalid]="!!pokemonError()"
+      [describedBy]="pokemonError() ? 'team-pokemon-error' : 'team-pokemon-hint'"
+    />
+    @if (pokemonError(); as message) {
+      <p id="team-pokemon-error" class="team-form__error" role="alert">{{ message }}</p>
+    } @else {
+      <p id="team-pokemon-hint" class="team-form__hint">
+        Search by name and pick 1 to 6. Use ↑ ↓ and Enter to choose from the keyboard.
+      </p>
+    }
+  </div>
+
+  <button type="submit" class="btn btn--primary team-form__submit">
+    @if (isFormPending()) {
+      <app-spinner [size]="14" label="Validating" /> Validating…
+    } @else {
+      <img src="assets/icons/ic_add.svg" width="16" height="16" alt="" aria-hidden="true" />
+      Create team
+    }
+  </button>
+</form>

@@ -1,0 +1,63 @@
+@use 'app/common/styles/shared' as *;
+
+.team-form {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+
+  &__title {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  &__label {
+    font-weight: 600;
+  }
+
+  &__counter {
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+
+    &--over {
+      color: var(--color-danger);
+    }
+  }
+
+  // Reserve one line so messages appearing or disappearing do not shift the form.
+  &__hint,
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 18px;
+    margin: 0;
+    font-size: 12px;
+  }
+
+  &__hint {
+    color: var(--color-text-muted);
+  }
+
+  &__error {
+    color: #ff6b6b;
+  }
+
+  &__submit {
+    align-self: flex-start;
+  }
+}
