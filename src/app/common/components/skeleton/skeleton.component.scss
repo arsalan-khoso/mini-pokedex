@@ -1,0 +1,7 @@
+@use 'app/common/styles/shared' as *;
+
+:host {
+  @extend %sk-shimmer;
+  display: block;
+  flex-shrink: 0;
+}

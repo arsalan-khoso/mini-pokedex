@@ -1,0 +1,43 @@
+:host {
+  display: block;
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 16px;
+  text-align: center;
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  &__message {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+}
+
+:host(.error-state--compact) .error-state {
+  flex-direction: row;
+  padding: 12px;
+  text-align: left;
+
+  .error-state__icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .error-state__text {
+    flex: 1;
+  }
+}

@@ -1,0 +1,18 @@
+<div class="error-state" role="alert">
+  <img
+    class="error-state__icon"
+    src="assets/icons/ic_alert.svg"
+    width="32"
+    height="32"
+    alt=""
+    aria-hidden="true"
+  />
+  <div class="error-state__text">
+    <p class="error-state__title">{{ title() }}</p>
+    <p class="error-state__message">{{ message() }}</p>
+  </div>
+  <button type="button" class="btn btn--primary" (click)="retry.emit()">
+    <img src="assets/icons/ic_refresh.svg" width="16" height="16" alt="" aria-hidden="true" />
+    Retry
+  </button>
+</div>

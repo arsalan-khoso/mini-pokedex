@@ -1,0 +1,17 @@
+<div class="empty-state" role="status">
+  <img
+    class="empty-state__icon"
+    src="assets/icons/ic_pokeball.svg"
+    width="32"
+    height="32"
+    alt=""
+    aria-hidden="true"
+  />
+  <p class="empty-state__title">{{ title() }}</p>
+  @if (message()) {
+    <p class="empty-state__message">{{ message() }}</p>
+  }
+  @if (actionLabel()) {
+    <button type="button" class="btn" (click)="action.emit()">{{ actionLabel() }}</button>
+  }
+</div>

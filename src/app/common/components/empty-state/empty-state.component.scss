@@ -1,0 +1,31 @@
+:host {
+  display: block;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 16px;
+  text-align: center;
+
+  &__title {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  &__message {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+}
+
+:host(.empty-state--compact) .empty-state {
+  padding: 12px;
+
+  .empty-state__icon {
+    width: 20px;
+    height: 20px;
+  }
+}

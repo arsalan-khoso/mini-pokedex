@@ -1,5 +1,6 @@
 :root {
   --color-primary: #007acc;
+  --color-primary-hover: #1a8cd8;
   --color-secondary: #6c757d;
   --color-accent: #ffb414;
   --color-success: #28a745;
@@ -11,10 +12,12 @@
   --color-surface-overlay: rgba(19, 21, 21, 0.75);
   --color-border: rgba(255, 255, 255, 0.1);
   --color-text-muted: rgba(255, 255, 255, 0.6);
+  --color-focus: #4db3ff;
   --panel-width: 393px;
   --backdrop-blur: blur(16px);
   --radius-sm: 4px;
   --radius-md: 8px;
+  --control-height: 36px;
 }
 
 html {
@@ -27,11 +30,99 @@ body {
   color: #ffffff;
   margin: 0;
   height: 100%;
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  font-size: 14px;
 }
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+// ── Buttons ────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--control-height);
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-3);
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    background-color: var(--color-primary);
+    border-color: transparent;
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-primary-hover);
+    }
+  }
+
+  &--ghost {
+    background-color: transparent;
+  }
+
+  &--icon {
+    width: var(--control-height);
+    padding: 0;
+  }
+}
+
+// ── Form controls ──────────────────────────────────────────
+.form-control {
+  width: 100%;
+  height: var(--control-height);
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: inherit;
+  font: inherit;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &--invalid {
+    border-color: var(--color-danger);
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }

@@ -1,0 +1,25 @@
+<div class="toast-container" aria-live="polite">
+  @for (toast of toasts(); track toast.id) {
+    <div
+      class="toast-container__toast"
+      [class.toast-container__toast--error]="toast.kind === 'error'"
+      [class.toast-container__toast--success]="toast.kind === 'success'"
+      [attr.role]="toast.kind === 'error' ? 'alert' : 'status'"
+    >
+      <p class="toast-container__message">{{ toast.message }}</p>
+      @if (toast.action; as action) {
+        <button type="button" class="btn btn--ghost" (click)="runAction(toast)">
+          {{ action.label }}
+        </button>
+      }
+      <button
+        type="button"
+        class="btn btn--ghost btn--icon"
+        aria-label="Dismiss notification"
+        (click)="dismiss(toast)"
+      >
+        <img src="assets/icons/ic_close.svg" width="16" height="16" alt="" aria-hidden="true" />
+      </button>
+    </div>
+  }
+</div>
