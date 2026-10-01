@@ -1,0 +1,124 @@
+@use 'app/common/styles/shared' as *;
+
+.pokemon-table {
+  @include card;
+  @include custom-scrollbar;
+  overflow-x: auto;
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  &__th {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+
+    &--sprite {
+      width: 64px;
+    }
+
+    &--name {
+      min-width: 160px;
+    }
+
+    &--numeric {
+      text-align: right;
+    }
+  }
+
+  &__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+
+    &:hover {
+      color: #ffffff;
+    }
+  }
+
+  th[aria-sort='ascending'] &__sort,
+  th[aria-sort='descending'] &__sort {
+    color: #ffffff;
+  }
+
+  &__sort-icon {
+    width: 12px;
+    opacity: 0.7;
+  }
+
+  // Fixed row height keeps skeleton, data and empty/error rows from shifting the layout.
+  &__row {
+    height: 60px;
+    border-bottom: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.04);
+    }
+
+    &--selected {
+      background-color: rgba(0, 122, 204, 0.18);
+
+      &:hover {
+        background-color: rgba(0, 122, 204, 0.24);
+      }
+    }
+
+    &--skeleton {
+      cursor: default;
+    }
+  }
+
+  &__td {
+    padding: 6px 8px;
+    vertical-align: middle;
+
+    &--sprite {
+      img {
+        display: block;
+        image-rendering: pixelated;
+      }
+    }
+
+    &--numeric {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+
+      app-skeleton {
+        margin-left: auto;
+      }
+    }
+
+    &--total {
+      font-weight: 700;
+    }
+  }
+
+  &__dex-number {
+    margin-right: 8px;
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__name {
+    font-weight: 600;
+  }
+
+  &__types {
+    display: inline-flex;
+    gap: 4px;
+  }
+}

@@ -1,0 +1,28 @@
+.pokemon-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  &__search {
+    position: relative;
+    flex: 1 1 240px;
+    max-width: 360px;
+  }
+
+  &__search-icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &__search-input {
+    padding-left: 36px;
+  }
+
+  &__type {
+    flex: 0 0 180px;
+  }
+}

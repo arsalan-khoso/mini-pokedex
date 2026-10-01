@@ -1,0 +1,42 @@
+<section class="pokedex-page">
+  <header class="pokedex-page__header">
+    <h2 class="pokedex-page__title">Pokédex</h2>
+    <p class="pokedex-page__subtitle">
+      Browse every species, sort by any stat and select a row for details.
+    </p>
+  </header>
+
+  <app-pokemon-filters
+    [search]="query().search"
+    [type]="query().type"
+    [types]="types()"
+    (searchChange)="onSearchChange($event)"
+    (typeChange)="onTypeChange($event)"
+  />
+
+  <app-pokemon-table
+    [rows]="page().items"
+    [status]="status()"
+    [error]="error()"
+    [sortColumn]="query().sortColumn"
+    [sortDirection]="query().sortDirection"
+    [hasActiveFilters]="hasActiveFilters()"
+    [skeletonRowCount]="query().pageSize"
+    (sortChange)="onSortChange($event)"
+    (retry)="onRetry()"
+    (clearFilters)="onClearFilters()"
+  />
+
+  <app-paginator
+    [page]="page().page"
+    [pageCount]="page().pageCount"
+    [pageSize]="query().pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    [rangeStart]="page().rangeStart"
+    [rangeEnd]="page().rangeEnd"
+    [totalItems]="page().totalItems"
+    [disabled]="status() !== 'success'"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+  />
+</section>

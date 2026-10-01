@@ -1,0 +1,56 @@
+<nav class="paginator" aria-label="Pagination">
+  <label class="paginator__size">
+    Rows per page
+    <select
+      class="form-control paginator__select"
+      [disabled]="disabled()"
+      (change)="onPageSizeChange($event)"
+    >
+      @for (option of pageSizeOptions(); track option) {
+        <option [value]="option" [selected]="option === pageSize()">{{ option }}</option>
+      }
+    </select>
+  </label>
+
+  <span class="paginator__range" aria-live="polite">
+    @if (disabled()) {
+      —
+    } @else {
+      {{ rangeStart() }}–{{ rangeEnd() }} of {{ totalItems() }}
+    }
+  </span>
+
+  <div class="paginator__buttons">
+    <button
+      type="button"
+      class="btn btn--icon"
+      aria-label="Previous page"
+      [disabled]="disabled() || page() === 0"
+      (click)="pageChange.emit(page() - 1)"
+    >
+      <img
+        src="assets/icons/ic_chevron_left.svg"
+        width="18"
+        height="18"
+        alt=""
+        aria-hidden="true"
+      />
+    </button>
+    <span class="paginator__page">Page {{ page() + 1 }} / {{ pageCount() }}</span>
+    <button
+      type="button"
+      class="btn btn--icon"
+      aria-label="Next page"
+      [disabled]="disabled() || page() >= pageCount() - 1"
+      (click)="pageChange.emit(page() + 1)"
+    >
+      <img
+        src="assets/icons/ic_chevron_right.svg"
+        width="18"
+        height="18"
+        alt=""
+        aria-hidden="true"
+      />
+    </button>
+  </div>
+</nav>

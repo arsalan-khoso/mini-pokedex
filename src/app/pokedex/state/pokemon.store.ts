@@ -111,9 +111,10 @@ export class PokemonStore {
       )
       .subscribe();
 
+    // Not trimmed here: the value is echoed back into the input, and trimming would eat a typed
+    // trailing space ("mr " → "mr"). `filterPokemon` trims when matching instead.
     this.tableSearchInput
       .pipe(
-        map((term) => term.trim()),
         debounceTime(SEARCH_DEBOUNCE_MS),
         distinctUntilChanged(),
         takeUntilDestroyed(this.destroyRef),

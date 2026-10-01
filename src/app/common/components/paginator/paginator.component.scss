@@ -1,0 +1,36 @@
+.paginator {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  color: var(--color-text-muted);
+
+  &__size {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__select {
+    width: 72px;
+  }
+
+  &__range {
+    min-width: 120px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__page {
+    min-width: 96px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+}

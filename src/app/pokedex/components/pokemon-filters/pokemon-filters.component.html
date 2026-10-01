@@ -1,0 +1,31 @@
+<div class="pokemon-filters" role="search">
+  <label class="pokemon-filters__search">
+    <span class="visually-hidden">Search Pokémon by name</span>
+    <img
+      class="pokemon-filters__search-icon"
+      src="assets/icons/ic_search.svg"
+      width="16"
+      height="16"
+      alt=""
+      aria-hidden="true"
+    />
+    <input
+      class="form-control pokemon-filters__search-input"
+      type="search"
+      placeholder="Search by name…"
+      autocomplete="off"
+      [value]="search()"
+      (input)="onSearchInput($event)"
+    />
+  </label>
+
+  <label class="pokemon-filters__type">
+    <span class="visually-hidden">Filter by type</span>
+    <select class="form-control" (change)="onTypeChange($event)">
+      <option value="" [selected]="type() === null">All types</option>
+      @for (option of types(); track option) {
+        <option [value]="option" [selected]="option === type()">{{ option | displayName }}</option>
+      }
+    </select>
+  </label>
+</div>
