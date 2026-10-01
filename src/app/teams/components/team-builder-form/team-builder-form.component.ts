@@ -46,7 +46,12 @@ export class TeamBuilderFormComponent {
     ],
     pokemonIds: [
       [] as number[],
-      [Validators.minLength(TEAM_MIN_POKEMON), Validators.maxLength(TEAM_MAX_POKEMON)],
+      // `minLength` skips empty values by design, so `required` is what rejects an empty team.
+      [
+        Validators.required,
+        Validators.minLength(TEAM_MIN_POKEMON),
+        Validators.maxLength(TEAM_MAX_POKEMON),
+      ],
     ],
   });
 
@@ -93,7 +98,9 @@ export class TeamBuilderFormComponent {
     this.formEvent();
     const control = this.form.controls.pokemonIds;
     if (!shouldShowErrors(control)) return null;
-    if (control.hasError('minlength')) return `Pick at least ${TEAM_MIN_POKEMON} Pokémon.`;
+    if (control.hasError('required') || control.hasError('minlength')) {
+      return `Pick at least ${TEAM_MIN_POKEMON} Pokémon.`;
+    }
     if (control.hasError('maxlength'))
       return `A team can have at most ${TEAM_MAX_POKEMON} Pokémon.`;
     return null;
