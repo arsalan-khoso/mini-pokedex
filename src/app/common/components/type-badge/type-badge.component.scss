@@ -1,4 +1,8 @@
 :host {
+  display: inline-flex;
+}
+
+.type-badge {
   display: inline-block;
   min-width: 56px;
   padding: 2px 8px;

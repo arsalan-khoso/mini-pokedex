@@ -1,6 +1,10 @@
 :host {
-  display: inline-block;
+  display: inline-flex;
   flex-shrink: 0;
+}
+
+.spinner {
+  display: block;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-top-color: #ffffff;
   border-radius: 50%;

@@ -1,7 +1,13 @@
 @use 'app/common/styles/shared' as *;
 
 :host {
-  @extend %sk-shimmer;
   display: block;
   flex-shrink: 0;
+}
+
+.skeleton {
+  @extend %sk-shimmer;
+  display: block;
+  width: 100%;
+  height: 100%;
 }

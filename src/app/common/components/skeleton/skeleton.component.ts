@@ -3,14 +3,13 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 /** Shimmering placeholder block used while content loads, sized to match the real content. */
 @Component({
   selector: 'app-skeleton',
-  template: '',
+  templateUrl: './skeleton.component.html',
   styleUrl: './skeleton.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // Sizing lives on the host so parents can align it like any block (e.g. right-aligned cells).
   host: {
-    'aria-hidden': 'true',
     '[style.width]': 'width()',
     '[style.height]': 'height()',
-    '[style.border-radius]': 'radius()',
   },
 })
 export class SkeletonComponent {

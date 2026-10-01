@@ -5,10 +5,9 @@ const FALLBACK_COLOR = '#68a090';
 
 @Component({
   selector: 'app-type-badge',
-  template: '{{ type() }}',
+  templateUrl: './type-badge.component.html',
   styleUrl: './type-badge.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { '[style.background-color]': 'color()' },
 })
 export class TypeBadgeComponent {
   readonly type = input.required<string>();
