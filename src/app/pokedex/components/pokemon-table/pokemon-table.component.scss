@@ -83,7 +83,9 @@
   }
 
   &__td {
-    padding: 6px 8px;
+    // 48px sprite + 2×4px padding + 1px border stays inside the 60px row, so skeleton and
+    // data rows are exactly the same height.
+    padding: 4px 8px;
     vertical-align: middle;
 
     &--sprite {
