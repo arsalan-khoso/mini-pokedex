@@ -2,7 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, of } from 'rxjs';
 import { Pokemon, StatKey } from '../models/pokemon.model';
 import { PokemonApiService } from '../services/pokemon-api.service';
-import { PokemonSelectors, filterPokemon, paginate, sortPokemon } from './pokemon.selectors';
+import {
+  PokemonSelectors,
+  filterPokemon,
+  paginate,
+  selectTableSource,
+  sortPokemon,
+} from './pokemon.selectors';
 import { PokemonStore } from './pokemon.store';
 
 function makePokemon(id: number, name: string, types: string[], speed: number): Pokemon {
@@ -88,6 +94,38 @@ describe('pokemon selectors', () => {
         pageCount: 1,
         rangeStart: 0,
         rangeEnd: 0,
+      });
+    });
+  });
+
+  describe('selectTableSource', () => {
+    const list = { status: 'success' as const, data: ALL, error: null };
+
+    it('uses the cached list when no search is active', () => {
+      const idle = { term: '', status: 'idle' as const, data: [], error: null };
+      expect(selectTableSource(list, '  ', idle)).toEqual({
+        status: 'success',
+        error: null,
+        items: ALL,
+      });
+    });
+
+    it('treats results for an older term as still loading', () => {
+      const stale = { term: 'char', status: 'success' as const, data: [CHARMANDER], error: null };
+      expect(selectTableSource(list, 'pika', stale)).toMatchObject({
+        status: 'loading',
+        items: [],
+      });
+    });
+
+    it('returns the search results and errors for the current term', () => {
+      const found = { term: 'pika', status: 'success' as const, data: [PIKACHU], error: null };
+      const failed = { term: 'pika', status: 'error' as const, data: [], error: 'Offline' };
+
+      expect(selectTableSource(list, 'pika ', found).items).toEqual([PIKACHU]);
+      expect(selectTableSource(list, 'pika', failed)).toMatchObject({
+        status: 'error',
+        error: 'Offline',
       });
     });
   });
