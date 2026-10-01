@@ -1,7 +1,19 @@
 <header class="app-shell__header">
   <h1 class="app-shell__title">Mini Pokédex</h1>
+  <nav class="app-shell__nav" aria-label="Main">
+    <a
+      class="app-shell__link"
+      routerLink="/pokedex"
+      routerLinkActive="app-shell__link--active"
+      ariaCurrentWhenActive="page"
+    >
+      Pokédex
+    </a>
+  </nav>
 </header>
 
 <main class="app-shell__content">
   <router-outlet />
 </main>
+
+<app-toast-container />
