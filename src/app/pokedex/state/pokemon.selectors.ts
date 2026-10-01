@@ -20,7 +20,7 @@ export interface PageSlice<T> {
   rangeEnd: number;
 }
 
-const IDLE_DETAILS: AsyncResource<PokemonDetails | null> = {
+export const IDLE_DETAILS: AsyncResource<PokemonDetails | null> = {
   status: 'idle',
   data: null,
   error: null,

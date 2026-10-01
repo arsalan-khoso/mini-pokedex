@@ -21,6 +21,8 @@
     [sortColumn]="query().sortColumn"
     [sortDirection]="query().sortDirection"
     [hasActiveFilters]="hasActiveFilters()"
+    [selectedId]="isPanelOpen() ? selectedPokemonId() : null"
+    (rowSelect)="onRowSelect($event)"
     [skeletonRowCount]="query().pageSize"
     (sortChange)="onSortChange($event)"
     (retry)="onRetry()"
@@ -40,3 +42,11 @@
     (pageSizeChange)="onPageSizeChange($event)"
   />
 </section>
+
+<app-pokemon-detail-panel
+  [pokemon]="selectedPokemon()"
+  [details]="selectedDetails()"
+  [open]="isPanelOpen()"
+  (closed)="onPanelClosed()"
+  (retryDetails)="onRetryDetails()"
+/>
